@@ -3,32 +3,36 @@
 
 #include "Node.h"
 
-bool BFS(queue<Node*>& frontier, Node* goalState) {
+bool BFS(priority_queue<Node*, vector<Node*>, CompareNodes> frontier, Node* goalState) {
 	vector<string> visited;
+	bool goalFound = false;
 
 	while (!frontier.empty()) {
-		Node* newNode = frontier.front();
+		Node* currentNode = frontier.top();
 		frontier.pop();
 
-		newNode->printState();
+		//cout << "Current Node: " << endl;
+		currentNode->printState();
+		//cout << currentNode->getDepth() << endl;
+		visited.push_back(currentNode->getState());
 
-		if (newNode->expand(frontier, visited, goalState))
+		frontier = currentNode->expand(frontier, visited, goalState, goalFound);
+
+		if (goalFound)
 			return true;
+		
 	}
 
 	return false;
 }
 
 int main() {
-	Node* goalState = new Node("123456078");
-	Node* initialState = new Node("123456708");
+	Node* goalState = new Node("123405678");
+	Node* initialState = new Node("012345678");
 
-	queue<Node*> frontier;
+	priority_queue<Node*, vector<Node*>, CompareNodes> frontier;
 	frontier.push(initialState);
 
-	if (BFS(frontier, goalState)) {
-		cout << "SUCCESS!" << endl;
-	}
-	else
+	if (!BFS(frontier, goalState)) 
 		cout << "FAILURE!" << endl;
 }

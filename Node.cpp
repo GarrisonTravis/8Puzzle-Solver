@@ -4,79 +4,145 @@
 #include "Node.h"
 
 //Function to generate the child nodes
-bool Node::expand(queue<Node*>& frontier, vector<string>& visited, Node* goalState) {
+priority_queue<Node*, vector<Node*>, CompareNodes> Node::expand(priority_queue<Node*, vector<Node*>, CompareNodes> frontier, vector<string>& visited, Node* goalState, bool& goalFound) {
     
     if (checkMove("UP")) {
-        cout << "UP" << endl;
+       // cout << "UP" << endl;
         Node* newNode = applyMove("UP");
-        newNode->printState();
+       // newNode->printState();
+        newNode->setHeuristic(newNode->manDistance(goalState->getState()));
+       // cout << newNode->depth << endl;
 
-        if (goalState->state == newNode->state) {
-            return true;
-        }
-
-        if (newNode->state != state && find(visited.begin(), visited.end(), newNode->state) == visited.end()) {
+        if (find(visited.begin(), visited.end(), newNode->state) == visited.end()) {
             frontier.push(newNode);
             visited.push_back(newNode->state);
+
+            newNode->path.push_back(pair<string, Node*>("UP", newNode));
+        }
+
+        //Check if at goal state
+        if (goalState->getState() == newNode->getState()) {
+            newNode->printPathToGoal();
+            goalFound = true;
         }
     }
     if (checkMove("DOWN")) {
-        cout << "DOWN" << endl;
+       // cout << "DOWN" << endl;
         Node* newNode = applyMove("DOWN");
-        newNode->printState();
+       // newNode->printState();
+        newNode->setHeuristic(newNode->manDistance(goalState->getState()));
+       // cout << newNode->depth << endl;
 
-        if (goalState->state == newNode->state) {
-            return true;
-        }
-
-        if (newNode->state != state && find(visited.begin(), visited.end(), newNode->state) == visited.end()) {
+        if (find(visited.begin(), visited.end(), newNode->state) == visited.end()) {
             frontier.push(newNode);
             visited.push_back(newNode->state);
+
+            newNode->path.push_back(pair<string, Node*>("DOWN", newNode));
+        }
+
+        //Check if at goal state
+        if (goalState->getState() == newNode->getState()) {
+            newNode->printPathToGoal();
+            goalFound = true;
         }
     }
     if (checkMove("LEFT")) {
-        cout << "LEFT" << endl;
+       // cout << "LEFT" << endl;
         Node* newNode = applyMove("LEFT");
-        newNode->printState();
+       // newNode->printState();
+        newNode->setHeuristic(newNode->manDistance(goalState->getState()));
+       // cout << newNode->depth << endl;
 
-        if (goalState->state == newNode->state) {
-            return true;
-        }
-
-        if (newNode->state != state && find(visited.begin(), visited.end(), newNode->state) == visited.end()) {
+        if (find(visited.begin(), visited.end(), newNode->state) == visited.end()) {
             frontier.push(newNode);
             visited.push_back(newNode->state);
+
+            newNode->path.push_back(pair<string, Node*>("LEFT", newNode));
+        }
+
+        //Check if at goal state
+        if (goalState->getState() == newNode->getState()) {
+            newNode->printPathToGoal();
+            goalFound = true;
         }
     }
     if (checkMove("RIGHT")) {
-        cout << "RIGHT" << endl;
+        //cout << "RIGHT" << endl;
         Node* newNode = applyMove("RIGHT");
-        newNode->printState();
+       // newNode->printState();
+        newNode->setHeuristic(newNode->manDistance(goalState->getState()));
+       // cout << newNode->depth << endl;
 
-        if (goalState->state == newNode->state) {
-            return true;
-        }
-
-        if (newNode->state != state && find(visited.begin(), visited.end(), newNode->state) == visited.end()) {
+        if (find(visited.begin(), visited.end(), newNode->state) == visited.end()) {
             frontier.push(newNode);
             visited.push_back(newNode->state);
+
+            newNode->path.push_back(pair<string, Node*>("RIGHT", newNode));
+        }
+
+        //Check if at goal state
+        if (goalState->getState() == newNode->getState()) {
+            newNode->printPathToGoal();
+            goalFound = true;
         }
     }
+
+    return frontier;
+}
+
+//Function to get the Manhattan Distance heuristic for a state
+int Node::manDistance(string goalState) {
+    int goalX = -1, goalY = -1, stateX = -1, stateY = -1;
+    int manDistance = 0;
+    int totalManDistance = 0;
+    int goalIndex = -1, stateIndex = -1;
+
+    for (int i = 0; i < BOARD_SIZE; i++) {
+
+        //Get the location of each number on the current state and the goal state
+        goalIndex = getLocation(goalState, '0' + i);
+        stateIndex = getLocation(state, '0' + i);
+
+        //cout << "i = " << i << endl;
+       // cout << "goalIndex = " << goalIndex << endl;
+       // cout << "stateIndex = " << stateIndex << endl;
+
+        //Get the index in the form of a coordinate point
+        goalX = goalIndex / 3;
+        goalY = goalIndex % 3;
+        stateX = stateIndex / 3;
+        stateY = stateIndex % 3;
+
+        //cout << "goalX = " << goalX << endl;
+       // cout << "goalY = " << goalY << endl;
+       // cout << "stateX = " << stateX << endl;
+       // cout << "stateY = " << stateY << endl;
+
+        //Perform abs(x1 - x2) + abs(y1 - y2) to get Manhattan Distance
+        manDistance = abs(goalX - stateX) + abs(goalY - stateY);
+
+       // cout << "man = " << manDistance << endl << endl;
+
+        totalManDistance += manDistance;
+    }
+
+    //cout << "ManDistance = " << totalManDistance << endl;
+
+    return totalManDistance;
 }
 
 //Function to get the location of the blank tile
-int Node::blankLocation() {
-	for (int i = 0; i < state.size(); i++) {
-		if (state[i] == '0')
-			return i;
-	}
+size_t Node::getLocation(string state, char val) {
+    size_t loc = state.find(val);
+    if (loc != string::npos)
+        return loc;
 
 	return -1;
 }
 
 //Function to push all available moves onto a vector
 bool Node::checkMove(string move) {
-	int blank = blankLocation();
+	int blank = getLocation(state, '0');
 	
     if (move == "UP") {
         if (blank >= 0 && blank <= 2)
@@ -109,7 +175,7 @@ bool Node::checkMove(string move) {
 Node* Node::applyMove(string move) {
 
     string newState = state;
-    int blank = blankLocation();
+    int blank = getLocation(state, '0');
 
     if (move == "UP") {
         newState[blank] = newState[blank - 3];
@@ -128,9 +194,25 @@ Node* Node::applyMove(string move) {
         newState[blank + 1] = '0';
     }
 
-    Node* newNode = new Node(newState);
+    Node* newNode = new Node(newState, depth + 1, path);
 
     return newNode;
+}
+
+//Function to print the path to the goal state
+void Node::printPathToGoal() {
+
+    cout << "SUCCESS!" << endl;
+    cout << "Path:" << endl;
+    cout << "-----" << endl << endl;
+
+    for (int i = 0; i < path.size(); i++) {
+        cout << path.at(i).first << endl;
+        cout << "Depth = " << path.at(i).second->depth << endl;
+        path.at(i).second->printState();
+        cout << path.at(i).second->getHeuristic() << endl;
+        cout << endl;
+    }
 }
 
 //Function to print the state of the board
