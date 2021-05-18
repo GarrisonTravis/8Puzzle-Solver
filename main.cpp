@@ -35,6 +35,16 @@ int main() {
 	Node* goalState = new Node("123456780");
 	Node* initialState = new Node("123405678");
 
+	cout << "Initial State:" << endl;
+	cout << "--------------" << endl;
+	initialState->printState();
+	cout << endl;
+
+	cout << "Goal State:" << endl;
+	cout << "--------------" << endl;
+	goalState->printState();
+	cout << endl;
+
 	if (!aStar(initialState, goalState)) 
 		cout << "Failure! Solution could not be found." << endl;
 }
