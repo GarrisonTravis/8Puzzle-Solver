@@ -42,10 +42,10 @@ public:
 	void printState();
 };
 
-//Struct to compare two ResPairs
+//Struct to compare two Nodes
 struct CompareNodes {
 	bool operator()(Node* n1, Node* n2) {
-		return n1->getHeuristic() > n2->getHeuristic();
+		return (n1->getHeuristic() + n1->getDepth()) > (n2->getHeuristic() + n2->getDepth());
 	}
 };
 

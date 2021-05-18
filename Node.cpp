@@ -7,12 +7,10 @@
 priority_queue<Node*, vector<Node*>, CompareNodes> Node::expand(priority_queue<Node*, vector<Node*>, CompareNodes> frontier, vector<string>& visited, Node* goalState, bool& goalFound) {
     
     if (checkMove("UP")) {
-       // cout << "UP" << endl;
         Node* newNode = applyMove("UP");
-       // newNode->printState();
         newNode->setHeuristic(newNode->manDistance(goalState->getState()));
-       // cout << newNode->depth << endl;
 
+        //If state is not in visited, then add to frontier
         if (find(visited.begin(), visited.end(), newNode->state) == visited.end()) {
             frontier.push(newNode);
             visited.push_back(newNode->state);
@@ -27,12 +25,10 @@ priority_queue<Node*, vector<Node*>, CompareNodes> Node::expand(priority_queue<N
         }
     }
     if (checkMove("DOWN")) {
-       // cout << "DOWN" << endl;
         Node* newNode = applyMove("DOWN");
-       // newNode->printState();
         newNode->setHeuristic(newNode->manDistance(goalState->getState()));
-       // cout << newNode->depth << endl;
 
+        //If state is not in visited, then add to frontier
         if (find(visited.begin(), visited.end(), newNode->state) == visited.end()) {
             frontier.push(newNode);
             visited.push_back(newNode->state);
@@ -47,12 +43,10 @@ priority_queue<Node*, vector<Node*>, CompareNodes> Node::expand(priority_queue<N
         }
     }
     if (checkMove("LEFT")) {
-       // cout << "LEFT" << endl;
         Node* newNode = applyMove("LEFT");
-       // newNode->printState();
         newNode->setHeuristic(newNode->manDistance(goalState->getState()));
-       // cout << newNode->depth << endl;
 
+        //If state is not in visited, then add to frontier
         if (find(visited.begin(), visited.end(), newNode->state) == visited.end()) {
             frontier.push(newNode);
             visited.push_back(newNode->state);
@@ -67,12 +61,10 @@ priority_queue<Node*, vector<Node*>, CompareNodes> Node::expand(priority_queue<N
         }
     }
     if (checkMove("RIGHT")) {
-        //cout << "RIGHT" << endl;
         Node* newNode = applyMove("RIGHT");
-       // newNode->printState();
         newNode->setHeuristic(newNode->manDistance(goalState->getState()));
-       // cout << newNode->depth << endl;
 
+        //If state is not in visited, then add to frontier
         if (find(visited.begin(), visited.end(), newNode->state) == visited.end()) {
             frontier.push(newNode);
             visited.push_back(newNode->state);
@@ -103,30 +95,17 @@ int Node::manDistance(string goalState) {
         goalIndex = getLocation(goalState, '0' + i);
         stateIndex = getLocation(state, '0' + i);
 
-        //cout << "i = " << i << endl;
-       // cout << "goalIndex = " << goalIndex << endl;
-       // cout << "stateIndex = " << stateIndex << endl;
-
         //Get the index in the form of a coordinate point
         goalX = goalIndex / 3;
         goalY = goalIndex % 3;
         stateX = stateIndex / 3;
         stateY = stateIndex % 3;
 
-        //cout << "goalX = " << goalX << endl;
-       // cout << "goalY = " << goalY << endl;
-       // cout << "stateX = " << stateX << endl;
-       // cout << "stateY = " << stateY << endl;
-
         //Perform abs(x1 - x2) + abs(y1 - y2) to get Manhattan Distance
         manDistance = abs(goalX - stateX) + abs(goalY - stateY);
 
-       // cout << "man = " << manDistance << endl << endl;
-
         totalManDistance += manDistance;
     }
-
-    //cout << "ManDistance = " << totalManDistance << endl;
 
     return totalManDistance;
 }
@@ -210,7 +189,6 @@ void Node::printPathToGoal() {
         cout << path.at(i).first << endl;
         cout << "Depth = " << path.at(i).second->depth << endl;
         path.at(i).second->printState();
-        cout << path.at(i).second->getHeuristic() << endl;
         cout << endl;
     }
 }

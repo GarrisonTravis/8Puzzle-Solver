@@ -3,36 +3,38 @@
 
 #include "Node.h"
 
-bool BFS(priority_queue<Node*, vector<Node*>, CompareNodes> frontier, Node* goalState) {
+//Function to perform aStar search to find the goalState
+bool aStar(Node* initialState, Node* goalState) {
+
+	priority_queue<Node*, vector<Node*>, CompareNodes> frontier;
 	vector<string> visited;
 	bool goalFound = false;
 
+	//Add initial state to the frontier and visited list
+	frontier.push(initialState);
+	visited.push_back(initialState->getState());
+
+	//While the frontier is not empty, pop the top of the queue and expand
 	while (!frontier.empty()) {
 		Node* currentNode = frontier.top();
 		frontier.pop();
-
-		//cout << "Current Node: " << endl;
-		currentNode->printState();
-		//cout << currentNode->getDepth() << endl;
-		visited.push_back(currentNode->getState());
 
 		frontier = currentNode->expand(frontier, visited, goalState, goalFound);
 
 		if (goalFound)
 			return true;
-		
 	}
 
 	return false;
 }
 
 int main() {
-	Node* goalState = new Node("123405678");
-	Node* initialState = new Node("012345678");
+	//Node* goalState = new Node("123456780");
+	//Node* initialState = new Node("867254301");
 
-	priority_queue<Node*, vector<Node*>, CompareNodes> frontier;
-	frontier.push(initialState);
+	Node* goalState = new Node("123456780");
+	Node* initialState = new Node("123405678");
 
-	if (!BFS(frontier, goalState)) 
-		cout << "FAILURE!" << endl;
+	if (!aStar(initialState, goalState)) 
+		cout << "Failure! Solution could not be found." << endl;
 }
